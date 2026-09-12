@@ -1,0 +1,64 @@
+/* ============================================================
+   DSA Tracker Pro — Main Stylesheet
+   theme.css: CSS variables & dark mode
+   ============================================================ */
+
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=Outfit:wght@400;600;700;800&display=swap');
+
+/* ─── LIGHT THEME VARIABLES ─── */
+:root {
+    --primary:        #6366F1;
+    --primary-dark:   #4f46e5;
+    --primary-light:  #a5b4fc;
+    --secondary:      #8B5CF6;
+    --success:        #10B981;
+    --danger:         #EF4444;
+    --warning:        #F59E0B;
+    --info:           #06B6D4;
+
+    --bg:             #F8FAFC;
+    --bg-2:           #EEF2FF;
+    --surface:        rgba(255,255,255,0.85);
+    --surface-solid:  #ffffff;
+    --glass:          rgba(255,255,255,0.8);
+    --glass-border:   rgba(255,255,255,0.5);
+
+    --text:           #1E293B;
+    --text-muted:     #64748B;
+    --text-faint:     #94A3B8;
+    --border:         #E2E8F0;
+
+    --sidebar-w:      260px;
+    --header-h:       64px;
+    --radius-sm:      8px;
+    --radius-md:      14px;
+    --radius-lg:      20px;
+    --radius-xl:      28px;
+
+    --shadow-sm:  0 2px 8px rgba(99,102,241,.06);
+    --shadow-md:  0 8px 24px rgba(99,102,241,.10);
+    --shadow-lg:  0 16px 48px rgba(99,102,241,.14);
+    --shadow-xl:  0 24px 64px rgba(99,102,241,.20);
+
+    --blur:       blur(20px);
+    --transition: all 0.3s cubic-bezier(.4,0,.2,1);
+}
+
+/* ─── DARK THEME OVERRIDES ─── */
+body.dark {
+    --bg:           #0F0F1A;
+    --bg-2:         #13131F;
+    --surface:      rgba(30,30,50,0.9);
+    --surface-solid:#1E1E32;
+    --glass:        rgba(30,30,50,0.8);
+    --glass-border: rgba(99,102,241,0.2);
+
+    --text:         #F1F5F9;
+    --text-muted:   #94A3B8;
+    --text-faint:   #64748B;
+    --border:       rgba(99,102,241,0.15);
+
+    --shadow-sm:  0 2px 8px rgba(0,0,0,.3);
+    --shadow-md:  0 8px 24px rgba(0,0,0,.4);
+    --shadow-lg:  0 16px 48px rgba(0,0,0,.5);
+}
