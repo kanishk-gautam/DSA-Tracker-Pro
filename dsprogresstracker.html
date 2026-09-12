@@ -1,0 +1,826 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="DSA Tracker Pro — Premium DSA Analytics Platform with progress tracking, streak system, XP gamification, and spaced repetition.">
+    <title>DSA Tracker Pro — Premium Analytics Platform</title>
+
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=Outfit:wght@400;600;700;800&display=swap" rel="stylesheet">
+
+    <!-- CSS -->
+    <link rel="stylesheet" href="css/theme.css">
+    <link rel="stylesheet" href="css/style.css">
+
+    <!-- Chart.js CDN -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+</head>
+<body>
+
+<!-- ═══════════════════════════════════════════════════════
+     APP SHELL
+═══════════════════════════════════════════════════════ -->
+<div id="app-shell">
+
+    <!-- ─── SIDEBAR ─── -->
+    <aside class="sidebar" id="sidebar">
+        <div class="sidebar-brand">
+            <div class="brand-icon">🚀</div>
+            <div class="brand-text">
+                <h1>DSA Tracker</h1>
+                <p>Pro Analytics</p>
+            </div>
+        </div>
+
+        <nav class="sidebar-nav">
+            <div class="nav-section-label">Main</div>
+
+            <div class="nav-item active" data-page="dashboard">
+                <span class="nav-icon">📊</span>
+                <span class="nav-label">Dashboard</span>
+            </div>
+
+            <div class="nav-item" data-page="progress">
+                <span class="nav-icon">📈</span>
+                <span class="nav-label">Progress</span>
+            </div>
+
+            <div class="nav-item" data-page="analytics">
+                <span class="nav-icon">🔬</span>
+                <span class="nav-label">Analytics</span>
+            </div>
+
+            <div class="nav-section-label" style="margin-top:.5rem">Study</div>
+
+            <div class="nav-item" data-page="roadmap">
+                <span class="nav-icon">🗺️</span>
+                <span class="nav-label">DSA Roadmap</span>
+            </div>
+
+            <div class="nav-item" data-page="revision">
+                <span class="nav-icon">📖</span>
+                <span class="nav-label">Revision Planner</span>
+                <span class="nav-badge" id="revision-badge"></span>
+            </div>
+
+            <div class="nav-item" data-page="calendar">
+                <span class="nav-icon">📅</span>
+                <span class="nav-label">Calendar</span>
+            </div>
+
+            <div class="nav-item" data-page="pomodoro">
+                <span class="nav-icon">⏱️</span>
+                <span class="nav-label">Pomodoro</span>
+            </div>
+
+            <div class="nav-section-label" style="margin-top:.5rem">Extras</div>
+
+            <div class="nav-item" data-page="achievements">
+                <span class="nav-icon">🏆</span>
+                <span class="nav-label">Achievements</span>
+            </div>
+
+            <div class="nav-item" data-page="notes">
+                <span class="nav-icon">📝</span>
+                <span class="nav-label">Notes</span>
+            </div>
+
+            <div class="nav-item" data-page="settings">
+                <span class="nav-icon">⚙️</span>
+                <span class="nav-label">Settings</span>
+            </div>
+        </nav>
+
+        <div class="sidebar-footer">
+            <button class="sidebar-toggle-btn" id="sidebar-toggle-footer">
+                <span class="nav-icon">◀</span>
+                <span class="nav-label">Collapse</span>
+            </button>
+        </div>
+    </aside>
+
+    <!-- ─── MAIN CONTENT ─── -->
+    <div class="main-content" id="main-content">
+
+        <!-- TOP HEADER -->
+        <header class="top-header">
+            <button class="header-btn" id="sidebar-toggle-btn" title="Toggle Sidebar" style="border-radius:10px;width:36px;height:36px">
+                ☰
+            </button>
+
+            <div class="header-search">
+                <span class="search-icon">🔍</span>
+                <input type="text" id="search-input" placeholder="Search topics, tasks, notes…" autocomplete="off">
+                <div class="search-results" id="search-results"></div>
+            </div>
+
+            <div id="header-date" style="font-size:.8rem;color:var(--text-muted);white-space:nowrap;display:none" class="hidden"></div>
+
+            <div class="header-actions">
+                <!-- Streak Badge -->
+                <div class="streak-display" id="streak-badge">
+                    <span class="streak-fire">🔥</span>
+                    <span class="streak-val">0 day streak</span>
+                </div>
+
+                <!-- Level Badge -->
+                <div class="level-badge" id="level-badge-header">
+                    ⭐ Lv <span id="stat-level-header">1</span>
+                </div>
+
+                <!-- Notifications -->
+                <button class="header-btn" id="notif-btn" title="Notifications">
+                    🔔
+                    <span class="notif-dot"></span>
+                </button>
+
+                <!-- Dark Mode -->
+                <button class="toggle-switch" id="theme-toggle" title="Toggle Dark Mode"></button>
+
+                <!-- Avatar -->
+                <div class="avatar" title="Profile">DS</div>
+            </div>
+        </header>
+
+        <!-- PAGE CONTAINER -->
+        <main class="page-container" id="page-container">
+
+            <!-- ══════════════════════════════════════════════
+                 PAGE: DASHBOARD
+            ══════════════════════════════════════════════ -->
+            <section class="page-section active" id="page-dashboard">
+                <h2 class="page-title">Dashboard</h2>
+                <p class="page-subtitle" id="header-date-display">Track your DSA journey</p>
+
+                <!-- STAT CARDS ROW 1 -->
+                <div class="grid-4 mb-2">
+                    <div class="card stat-card">
+                        <div class="stat-icon green">🎯</div>
+                        <div class="stat-content">
+                            <div class="stat-value" id="stat-solved">0</div>
+                            <div class="stat-label">Problems Solved</div>
+                        </div>
+                    </div>
+                    <div class="card stat-card">
+                        <div class="stat-icon orange">🔥</div>
+                        <div class="stat-content">
+                            <div class="stat-value" id="stat-streak">0</div>
+                            <div class="stat-label">Day Streak</div>
+                        </div>
+                    </div>
+                    <div class="card stat-card">
+                        <div class="stat-icon purple">⭐</div>
+                        <div class="stat-content">
+                            <div class="stat-value" id="stat-xp">0</div>
+                            <div class="stat-label">Total XP</div>
+                        </div>
+                    </div>
+                    <div class="card stat-card">
+                        <div class="stat-icon blue">🏅</div>
+                        <div class="stat-content">
+                            <div class="stat-value" id="stat-level">1</div>
+                            <div class="stat-label">Current Level</div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- STAT CARDS ROW 2 -->
+                <div class="grid-4 mb-2">
+                    <div class="card stat-card">
+                        <div class="stat-icon blue">📚</div>
+                        <div class="stat-content">
+                            <div class="stat-value" id="stat-topics">0</div>
+                            <div class="stat-label">Topics Covered</div>
+                        </div>
+                    </div>
+                    <div class="card stat-card">
+                        <div class="stat-icon purple">🏆</div>
+                        <div class="stat-content">
+                            <div class="stat-value" id="stat-milestone">100</div>
+                            <div class="stat-label">Next Milestone</div>
+                        </div>
+                    </div>
+                    <div class="card stat-card">
+                        <div class="stat-icon green">📊</div>
+                        <div class="stat-content">
+                            <div class="stat-value" id="stat-pct">0%</div>
+                            <div class="stat-label">Completion</div>
+                        </div>
+                    </div>
+                    <div class="card stat-card">
+                        <div class="stat-icon red">⏱️</div>
+                        <div class="stat-content">
+                            <div class="stat-value" id="stat-pomodoro">0</div>
+                            <div class="stat-label">Focus Sessions</div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- XP LEVEL BAR -->
+                <div class="card mb-2">
+                    <div class="card-header">
+                        <div class="card-title"><span class="card-icon">⭐</span> XP Progress</div>
+                        <div class="level-badge">Level <span id="stat-level-bar">1</span></div>
+                    </div>
+                    <div class="xp-bar-container">
+                        <div class="xp-bar-label">
+                            <span>XP to Next Level</span>
+                            <span id="xp-label">0 / 200 XP</span>
+                        </div>
+                        <div class="progress-track" style="height:12px">
+                            <div class="progress-fill" id="xp-fill" style="width:0%"></div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- MAIN GRID -->
+                <div class="grid-3">
+
+                    <!-- SOLVE COUNTER -->
+                    <div class="card">
+                        <div class="card-header">
+                            <div class="card-title"><span class="card-icon">➕</span> Log Problems</div>
+                        </div>
+                        <div style="text-align:center;padding:.5rem 0">
+                            <div style="font-size:4rem;font-weight:900;color:var(--primary);line-height:1" id="big-solved-count">0</div>
+                            <div style="color:var(--text-muted);font-size:.8rem;margin-top:.25rem">Problems Solved</div>
+                        </div>
+                        <div style="margin:.75rem 0">
+                            <label class="text-xs text-muted" style="display:block;margin-bottom:.3rem">Difficulty</label>
+                            <select id="solve-difficulty" style="margin-bottom:.75rem">
+                                <option value="easy">🟢 Easy</option>
+                                <option value="medium" selected>🟡 Medium</option>
+                                <option value="hard">🔴 Hard</option>
+                            </select>
+                        </div>
+                        <div style="display:flex;gap:.5rem">
+                            <button class="btn btn-danger flex-1" onclick="DSAApp.changeSolvedCount(-1)">−1</button>
+                            <button class="btn btn-success flex-1" onclick="DSAApp.changeSolvedCount(1)">+1 Solved!</button>
+                        </div>
+                        <div style="margin-top:.75rem">
+                            <div class="xp-bar-label">
+                                <span class="text-xs text-muted">Milestone Progress</span>
+                                <span class="text-xs text-primary" id="milestone-pct-text">0%</span>
+                            </div>
+                            <div class="progress-track mt-1">
+                                <div class="progress-fill" id="milestone-fill" style="width:0%"></div>
+                            </div>
+                        </div>
+                        <div class="input-row mt-2">
+                            <input type="number" id="milestone-target-input" placeholder="Set milestone" value="100" min="1">
+                            <button class="btn btn-ghost btn-sm" onclick="DSAApp.updateMilestone()">Set</button>
+                        </div>
+                    </div>
+
+                    <!-- TO-DO LIST -->
+                    <div class="card">
+                        <div class="card-header">
+                            <div class="card-title"><span class="card-icon">✅</span> To-Do List <span id="todo-counter" class="text-xs text-muted">(0 active)</span></div>
+                        </div>
+                        <div class="input-row">
+                            <input type="text" id="todo-input" placeholder="Add a task…" onkeydown="if(event.key==='Enter')DSAApp.addTodo()">
+                            <button class="btn btn-primary btn-sm" onclick="DSAApp.addTodo()">Add</button>
+                        </div>
+                        <div style="display:flex;gap:.5rem;margin-bottom:.75rem;flex-wrap:wrap">
+                            <select id="todo-priority" style="flex:1;min-width:80px;font-size:.78rem">
+                                <option value="high">🔴 High</option>
+                                <option value="medium" selected>🟡 Medium</option>
+                                <option value="low">🟢 Low</option>
+                            </select>
+                            <input type="date" id="todo-due" style="flex:1;min-width:100px;font-size:.78rem">
+                        </div>
+                        <div style="display:flex;gap:.5rem;margin-bottom:.5rem;flex-wrap:wrap">
+                            <select id="todo-filter" onchange="DSAApp.renderTodos()" style="font-size:.78rem;padding:.3rem .6rem">
+                                <option value="all">All</option>
+                                <option value="active">Active</option>
+                                <option value="completed">Done</option>
+                                <option value="high">High Priority</option>
+                            </select>
+                        </div>
+                        <ul id="todo-list" style="max-height:260px;overflow-y:auto"></ul>
+                    </div>
+
+                    <!-- TOPICS LOGGED -->
+                    <div class="card">
+                        <div class="card-header">
+                            <div class="card-title"><span class="card-icon">📚</span> Topics Today</div>
+                        </div>
+                        <div class="input-row">
+                            <select id="topic-select" style="flex:1"></select>
+                            <button class="btn btn-success btn-sm" onclick="DSAApp.logTopic()">Log</button>
+                        </div>
+                        <ul id="topics-logged-list" style="margin-top:.5rem;max-height:300px;overflow-y:auto;display:flex;flex-wrap:wrap;gap:.25rem"></ul>
+                    </div>
+
+                    <!-- WEEKLY GOALS -->
+                    <div class="card col-span-2">
+                        <div class="card-header">
+                            <div class="card-title"><span class="card-icon">🎯</span> Weekly Goals</div>
+                        </div>
+                        <div class="input-row">
+                            <input type="text" id="goal-text" placeholder="e.g., Solve 20 array problems…">
+                            <input type="number" id="goal-target" value="1" min="1" style="width:70px">
+                            <button class="btn btn-primary btn-sm" onclick="DSAApp.addWeeklyGoal()">Add Goal</button>
+                        </div>
+                        <div id="weekly-goals-list"></div>
+                    </div>
+
+                    <!-- MINI CHART -->
+                    <div class="card">
+                        <div class="card-header">
+                            <div class="card-title"><span class="card-icon">📊</span> Difficulty Split</div>
+                        </div>
+                        <div class="chart-container" style="height:180px">
+                            <canvas id="chart-difficulty-dash"></canvas>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- ══════════════════════════════════════════════
+                 PAGE: PROGRESS
+            ══════════════════════════════════════════════ -->
+            <section class="page-section" id="page-progress">
+                <h2 class="page-title">Progress</h2>
+                <p class="page-subtitle">Track your daily and weekly performance</p>
+
+                <div class="grid-2 mb-2">
+                    <div class="card">
+                        <div class="card-header">
+                            <div class="card-title"><span class="card-icon">📅</span> Daily Problems (Last 14 Days)</div>
+                        </div>
+                        <div class="chart-container" style="height:240px"><canvas id="chart-daily"></canvas></div>
+                    </div>
+                    <div class="card">
+                        <div class="card-header">
+                            <div class="card-title"><span class="card-icon">📈</span> Weekly Progress</div>
+                        </div>
+                        <div class="chart-container" style="height:240px"><canvas id="chart-weekly"></canvas></div>
+                    </div>
+                </div>
+
+                <!-- HEATMAP -->
+                <div class="card mb-2">
+                    <div class="card-header">
+                        <div class="card-title"><span class="card-icon">🟩</span> Study Heatmap — Last 12 Months</div>
+                    </div>
+                    <div id="heatmap-container" style="overflow-x:auto;padding:.5rem 0"></div>
+                    <div style="display:flex;align-items:center;gap:.5rem;margin-top:.75rem;font-size:.72rem;color:var(--text-muted)">
+                        <span>Less</span>
+                        <div style="width:13px;height:13px;border-radius:3px;background:rgba(99,102,241,.07)"></div>
+                        <div style="width:13px;height:13px;border-radius:3px;background:rgba(99,102,241,.2)"></div>
+                        <div style="width:13px;height:13px;border-radius:3px;background:rgba(99,102,241,.45)"></div>
+                        <div style="width:13px;height:13px;border-radius:3px;background:rgba(99,102,241,.7)"></div>
+                        <div style="width:13px;height:13px;border-radius:3px;background:rgba(99,102,241,.95)"></div>
+                        <span>More</span>
+                    </div>
+                </div>
+
+                <!-- STREAK STATS -->
+                <div class="grid-3">
+                    <div class="card stat-card">
+                        <div class="stat-icon orange">🔥</div>
+                        <div class="stat-content">
+                            <div class="stat-value" id="stat-streak-prog">0</div>
+                            <div class="stat-label">Current Streak</div>
+                        </div>
+                    </div>
+                    <div class="card stat-card">
+                        <div class="stat-icon purple">🏆</div>
+                        <div class="stat-content">
+                            <div class="stat-value" id="stat-best-streak">0</div>
+                            <div class="stat-label">Best Streak</div>
+                        </div>
+                    </div>
+                    <div class="card stat-card">
+                        <div class="stat-icon green">📆</div>
+                        <div class="stat-content">
+                            <div class="stat-value" id="stat-study-days">0</div>
+                            <div class="stat-label">Total Study Days</div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- ══════════════════════════════════════════════
+                 PAGE: ANALYTICS
+            ══════════════════════════════════════════════ -->
+            <section class="page-section" id="page-analytics">
+                <h2 class="page-title">Analytics</h2>
+                <p class="page-subtitle">Deep-dive into your performance data</p>
+
+                <div class="grid-2 mb-2">
+                    <div class="card">
+                        <div class="card-header">
+                            <div class="card-title"><span class="card-icon">📊</span> Monthly Overview</div>
+                        </div>
+                        <div class="chart-container" style="height:260px"><canvas id="chart-monthly"></canvas></div>
+                    </div>
+                    <div class="card">
+                        <div class="card-header">
+                            <div class="card-title"><span class="card-icon">🍩</span> Difficulty Breakdown</div>
+                        </div>
+                        <div class="chart-container" style="height:260px"><canvas id="chart-difficulty"></canvas></div>
+                    </div>
+                </div>
+
+                <div class="card mb-2">
+                    <div class="card-header">
+                        <div class="card-title"><span class="card-icon">🌐</span> Topic Distribution</div>
+                    </div>
+                    <div class="chart-container" style="height:320px"><canvas id="chart-topics"></canvas></div>
+                </div>
+
+                <!-- DIFFICULTY BREAKDOWN DETAILS -->
+                <div class="grid-3">
+                    <div class="card">
+                        <div class="card-header">
+                            <div class="card-title" style="color:var(--success)">🟢 Easy</div>
+                        </div>
+                        <div style="text-align:center">
+                            <div style="font-size:2.5rem;font-weight:800;color:var(--success)" id="easy-count">0</div>
+                            <div class="text-sm text-muted">Problems Solved</div>
+                        </div>
+                    </div>
+                    <div class="card">
+                        <div class="card-header">
+                            <div class="card-title" style="color:var(--warning)">🟡 Medium</div>
+                        </div>
+                        <div style="text-align:center">
+                            <div style="font-size:2.5rem;font-weight:800;color:var(--warning)" id="medium-count">0</div>
+                            <div class="text-sm text-muted">Problems Solved</div>
+                        </div>
+                    </div>
+                    <div class="card">
+                        <div class="card-header">
+                            <div class="card-title" style="color:var(--danger)">🔴 Hard</div>
+                        </div>
+                        <div style="text-align:center">
+                            <div style="font-size:2.5rem;font-weight:800;color:var(--danger)" id="hard-count">0</div>
+                            <div class="text-sm text-muted">Problems Solved</div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- ══════════════════════════════════════════════
+                 PAGE: DSA ROADMAP
+            ══════════════════════════════════════════════ -->
+            <section class="page-section" id="page-roadmap">
+                <h2 class="page-title">DSA Roadmap</h2>
+                <p class="page-subtitle">Track progress across all core DSA topics</p>
+                <div class="roadmap-grid" id="roadmap-container"></div>
+            </section>
+
+            <!-- ══════════════════════════════════════════════
+                 PAGE: REVISION PLANNER
+            ══════════════════════════════════════════════ -->
+            <section class="page-section" id="page-revision">
+                <h2 class="page-title">Revision Planner</h2>
+                <p class="page-subtitle">Spaced repetition to maximize retention</p>
+
+                <div class="card mb-2">
+                    <div class="card-header">
+                        <div class="card-title"><span class="card-icon">➕</span> Schedule Revision</div>
+                    </div>
+                    <div class="input-row">
+                        <input type="text" id="revision-topic-input" placeholder="Topic to revise (e.g., Graph DFS)…">
+                        <select id="revision-interval">
+                            <option value="1">1 Day</option>
+                            <option value="3">3 Days</option>
+                            <option value="7" selected>7 Days</option>
+                            <option value="15">15 Days</option>
+                            <option value="30">30 Days</option>
+                        </select>
+                        <button class="btn btn-primary" onclick="DSAApp.addRevisionTopic()">Schedule</button>
+                    </div>
+                </div>
+
+                <div class="card">
+                    <div class="card-header">
+                        <div class="card-title"><span class="card-icon">📖</span> Revision Queue</div>
+                    </div>
+                    <div id="revision-list"></div>
+                </div>
+            </section>
+
+            <!-- ══════════════════════════════════════════════
+                 PAGE: CALENDAR
+            ══════════════════════════════════════════════ -->
+            <section class="page-section" id="page-calendar">
+                <h2 class="page-title">Calendar & Reminders</h2>
+                <p class="page-subtitle">Plan your study schedule</p>
+
+                <div class="grid-2">
+                    <!-- Calendar -->
+                    <div class="card">
+                        <div class="cal-nav">
+                            <button class="btn btn-ghost btn-sm" id="cal-prev">◀ Prev</button>
+                            <span class="cal-month font-bold" id="cal-month-label">June 2026</span>
+                            <button class="btn btn-ghost btn-sm" id="cal-next">Next ▶</button>
+                        </div>
+                        <div class="cal-grid" id="cal-days-grid"></div>
+                        <div style="margin-top:.75rem;font-size:.72rem;display:flex;gap:1rem;flex-wrap:wrap">
+                            <span><span style="display:inline-block;width:10px;height:10px;border-radius:3px;background:rgba(16,185,129,.4);margin-right:4px"></span>Study Day</span>
+                            <span><span style="display:inline-block;width:10px;height:10px;border-radius:50%;background:var(--secondary);margin-right:4px"></span>Reminder</span>
+                            <span><span style="display:inline-block;width:10px;height:10px;border-radius:3px;border:2px solid var(--primary);margin-right:4px"></span>Today</span>
+                        </div>
+                        <div id="day-reminders" style="margin-top:.75rem"></div>
+                    </div>
+
+                    <!-- Reminders -->
+                    <div class="card">
+                        <div class="card-header">
+                            <div class="card-title"><span class="card-icon">🔔</span> Add Reminder</div>
+                        </div>
+                        <div class="input-row">
+                            <input type="text" id="reminder-text" placeholder="Reminder note…">
+                        </div>
+                        <div class="input-row">
+                            <input type="date" id="reminder-date">
+                            <button class="btn btn-primary" onclick="DSAApp.addReminder()">Save</button>
+                        </div>
+                        <h4 style="font-size:.85rem;font-weight:700;color:var(--text-muted);margin:.75rem 0 .5rem">Active Reminders</h4>
+                        <ul id="active-reminders-list" style="max-height:320px;overflow-y:auto"></ul>
+                    </div>
+                </div>
+            </section>
+
+            <!-- ══════════════════════════════════════════════
+                 PAGE: POMODORO
+            ══════════════════════════════════════════════ -->
+            <section class="page-section" id="page-pomodoro">
+                <h2 class="page-title">Pomodoro Timer</h2>
+                <p class="page-subtitle">Stay focused with timed study sessions</p>
+
+                <div class="grid-2">
+                    <div class="card" style="display:flex;flex-direction:column;align-items:center;gap:1.5rem;padding:2rem">
+                        <!-- Mode selector -->
+                        <div style="display:flex;gap:.5rem">
+                            <button class="btn btn-primary btn-sm" onclick="DSAPomodoro.setMode('focus')">🎯 Focus (25m)</button>
+                            <button class="btn btn-ghost btn-sm" onclick="DSAPomodoro.setMode('short')">☕ Break (5m)</button>
+                        </div>
+
+                        <!-- Custom timer -->
+                        <div style="display:flex;align-items:center;gap:.5rem">
+                            <label class="text-xs text-muted">Custom (min):</label>
+                            <input type="number" id="custom-timer" value="25" min="1" max="120" style="width:65px;text-align:center">
+                            <button class="btn btn-ghost btn-sm" onclick="DSAPomodoro.setMode('custom')">Set</button>
+                        </div>
+
+                        <!-- SVG Ring Timer -->
+                        <div style="position:relative;width:180px;height:180px">
+                            <svg width="180" height="180" viewBox="0 0 180 180">
+                                <defs>
+                                    <linearGradient id="timerGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+                                        <stop offset="0%" style="stop-color:#6366F1;stop-opacity:1"/>
+                                        <stop offset="100%" style="stop-color:#8B5CF6;stop-opacity:1"/>
+                                    </linearGradient>
+                                </defs>
+                                <circle cx="90" cy="90" r="70" class="timer-ring-bg" stroke-width="10"/>
+                                <circle cx="90" cy="90" r="70" id="timer-ring-fill" class="timer-ring-fill"
+                                    fill="none" stroke="url(#timerGrad)" stroke-width="10" stroke-linecap="round"
+                                    style="stroke-dasharray:439.82;stroke-dashoffset:439.82;transform:rotate(-90deg);transform-origin:90px 90px"/>
+                            </svg>
+                            <div style="position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);text-align:center">
+                                <div id="timer-display" style="font-size:2.2rem;font-weight:800;font-family:'Outfit',sans-serif;color:var(--text)">25:00</div>
+                                <div id="timer-mode-label" style="font-size:.7rem;color:var(--text-muted);text-transform:uppercase;letter-spacing:.05em">🎯 Focus</div>
+                            </div>
+                        </div>
+
+                        <!-- Controls -->
+                        <div style="display:flex;gap:.75rem">
+                            <button class="btn btn-success" onclick="DSAPomodoro.start()">▶ Start</button>
+                            <button class="btn btn-ghost" onclick="DSAPomodoro.stop()">⏸ Pause</button>
+                            <button class="btn btn-danger" onclick="DSAPomodoro.reset()">↺ Reset</button>
+                        </div>
+
+                        <div class="text-sm text-muted">Sessions today: <strong id="stat-pomodoro-pom">0</strong></div>
+                    </div>
+
+                    <!-- Tips -->
+                    <div class="card">
+                        <div class="card-header">
+                            <div class="card-title"><span class="card-icon">💡</span> Pomodoro Tips</div>
+                        </div>
+                        <ul style="list-style:none;display:flex;flex-direction:column;gap:.75rem">
+                            <li class="revision-card" style="flex-direction:column;align-items:flex-start">
+                                <strong style="font-size:.85rem">🎯 The Pomodoro Technique</strong>
+                                <p class="text-sm text-muted" style="margin-top:.25rem">Work for 25 minutes, then take a 5-minute break. After 4 pomodoros, take a 20-minute break.</p>
+                            </li>
+                            <li class="revision-card" style="flex-direction:column;align-items:flex-start">
+                                <strong style="font-size:.85rem">🧠 Deep Work</strong>
+                                <p class="text-sm text-muted" style="margin-top:.25rem">Eliminate distractions before starting. Put your phone away and close unnecessary tabs.</p>
+                            </li>
+                            <li class="revision-card" style="flex-direction:column;align-items:flex-start">
+                                <strong style="font-size:.85rem">📈 Track Your Sessions</strong>
+                                <p class="text-sm text-muted" style="margin-top:.25rem">Each completed session adds +15 XP to your profile. Consistency is key!</p>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+            </section>
+
+            <!-- ══════════════════════════════════════════════
+                 PAGE: ACHIEVEMENTS
+            ══════════════════════════════════════════════ -->
+            <section class="page-section" id="page-achievements">
+                <h2 class="page-title">Achievements</h2>
+                <p class="page-subtitle">Your earned badges and milestones</p>
+                <div class="badge-grid" id="achievements-grid"></div>
+            </section>
+
+            <!-- ══════════════════════════════════════════════
+                 PAGE: NOTES
+            ══════════════════════════════════════════════ -->
+            <section class="page-section" id="page-notes">
+                <h2 class="page-title">Topic Notes</h2>
+                <p class="page-subtitle">Store concepts, tricks, and revision notes per topic</p>
+
+                <div class="card mb-2">
+                    <div class="card-header">
+                        <div class="card-title"><span class="card-icon">📝</span> Add Note</div>
+                    </div>
+                    <div class="input-row">
+                        <select id="note-topic" style="max-width:200px"></select>
+                    </div>
+                    <textarea id="note-content" rows="5" placeholder="Write your notes, tricks, patterns…" style="resize:vertical;margin-bottom:.75rem"></textarea>
+                    <button class="btn btn-primary" onclick="DSAApp.addNote()">💾 Save Note</button>
+                </div>
+
+                <div id="notes-list"></div>
+            </section>
+
+            <!-- ══════════════════════════════════════════════
+                 PAGE: SETTINGS
+            ══════════════════════════════════════════════ -->
+            <section class="page-section" id="page-settings">
+                <h2 class="page-title">Settings</h2>
+                <p class="page-subtitle">Manage your preferences and export your data</p>
+
+                <div class="grid-2">
+                    <div class="card">
+                        <div class="card-header">
+                            <div class="card-title"><span class="card-icon">🎨</span> Appearance</div>
+                        </div>
+                        <div style="display:flex;align-items:center;justify-content:space-between;padding:.75rem 0;border-bottom:1px solid var(--border)">
+                            <div>
+                                <div class="font-bold text-sm">Dark Mode</div>
+                                <div class="text-xs text-muted">Switch between light and dark themes</div>
+                            </div>
+                            <button class="toggle-switch" id="theme-toggle-settings" onclick="DSATheme.toggle()"></button>
+                        </div>
+                    </div>
+
+                    <div class="card">
+                        <div class="card-header">
+                            <div class="card-title"><span class="card-icon">📤</span> Export Data</div>
+                        </div>
+                        <div style="display:flex;flex-direction:column;gap:.75rem">
+                            <button class="btn btn-primary w-full" onclick="DSAApp.exportCSV()">📊 Export as CSV</button>
+                            <button class="btn btn-ghost w-full" onclick="DSAApp.exportJSON()">📄 Export as JSON</button>
+                        </div>
+                    </div>
+
+                    <div class="card col-span-2">
+                        <div class="card-header">
+                            <div class="card-title"><span class="card-icon">ℹ️</span> About</div>
+                        </div>
+                        <p class="text-sm text-muted">
+                            <strong>DSA Tracker Pro</strong> — v2.0 Premium Analytics Platform.<br>
+                            Built with Node.js · Express · MongoDB · Chart.js.<br>
+                            Track your DSA journey, gamify your learning, stay consistent.
+                        </p>
+                        <div style="margin-top:1rem;display:flex;gap:.5rem;flex-wrap:wrap">
+                            <span class="chip chip-high">MongoDB</span>
+                            <span class="chip chip-medium">Node.js</span>
+                            <span class="chip chip-low">Chart.js</span>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+        </main><!-- /page-container -->
+    </div><!-- /main-content -->
+
+</div><!-- /app-shell -->
+
+<!-- ─── NOTIFICATION PANEL ─── -->
+<div class="notification-panel" id="notification-panel">
+    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:1rem">
+        <h3 style="font-size:1rem;font-weight:700">Notifications</h3>
+        <button class="btn btn-ghost btn-sm" onclick="document.getElementById('notification-panel').classList.remove('open')">✕</button>
+    </div>
+    <div id="notif-list"></div>
+</div>
+
+<!-- ─── TOAST CONTAINER ─── -->
+<div class="toast-container" id="toast-container"></div>
+
+<!-- ─── JS MODULES ─── -->
+<script src="js/theme.js"></script>
+<script src="js/stats.js"></script>
+<script src="js/streak.js"></script>
+<script src="js/achievements.js"></script>
+<script src="js/calendar.js"></script>
+<script src="js/charts.js"></script>
+<script src="js/app.js"></script>
+
+<!-- ─── PATCH: sync extra UI elements ─── -->
+<script>
+// Sync additional UI elements after renderAll
+document.addEventListener('DOMContentLoaded', () => {
+    // Header date display
+    const dateEl = document.getElementById('header-date-display');
+    if (dateEl) dateEl.innerText = new Date().toLocaleDateString('en-US', {
+        weekday: 'long', year: 'numeric', month: 'long', day: 'numeric'
+    });
+
+    // Patch renderAll to sync more elements
+    const originalRefresh = window.DSAStats.refreshStats;
+    window.DSAStats.refreshStats = function(state) {
+        originalRefresh(state);
+
+        // Big counter on dashboard
+        const bigCount = document.getElementById('big-solved-count');
+        if (bigCount) bigCount.innerText = state.totalSolved || 0;
+
+        // Level in header
+        const lvHdr = document.getElementById('stat-level-header');
+        if (lvHdr) lvHdr.innerText = state.currentLevel || 1;
+
+        const lvBar = document.getElementById('stat-level-bar');
+        if (lvBar) lvBar.innerText = state.currentLevel || 1;
+
+        // Milestone text
+        const milPct = document.getElementById('milestone-pct-text');
+        if (milPct) {
+            const pct = state.nextMilestone ? Math.min(100, Math.floor((state.totalSolved / state.nextMilestone) * 100)) : 0;
+            milPct.innerText = pct + '%';
+        }
+
+        // Progress page streaks
+        const sp = document.getElementById('stat-streak-prog');
+        if (sp) sp.innerText = state.currentStreak || 0;
+        const bs = document.getElementById('stat-best-streak');
+        if (bs) bs.innerText = state.bestStreak || 0;
+        const sd = document.getElementById('stat-study-days');
+        if (sd) sd.innerText = (state.studyDates || []).length;
+
+        // Analytics difficulty counts
+        const ec = document.getElementById('easy-count');
+        if (ec) ec.innerText = state.easySolved || 0;
+        const mc = document.getElementById('medium-count');
+        if (mc) mc.innerText = state.mediumSolved || 0;
+        const hc = document.getElementById('hard-count');
+        if (hc) hc.innerText = state.hardSolved || 0;
+
+        // Pomodoro sessions
+        const pp = document.getElementById('stat-pomodoro-pom');
+        if (pp) pp.innerText = state.pomodoroSessions || 0;
+
+        // Streak badge in header
+        const sb = document.getElementById('streak-badge');
+        if (sb) sb.querySelector('.streak-val').innerText = (state.currentStreak || 0) + ' day streak';
+
+        // Milestone input
+        const mi = document.getElementById('milestone-target-input');
+        if (mi && !mi.dataset.touched) mi.value = state.nextMilestone || 100;
+    };
+
+    // Render mini difficulty chart on dashboard after charts.js loads
+    const origRenderAll = window.DSACharts.renderAll;
+    window.DSACharts.renderAll = function(state) {
+        origRenderAll(state);
+        // mini dash difficulty chart
+        const canvas = document.getElementById('chart-difficulty-dash');
+        if (canvas && window.Chart) {
+            // destroy existing if any
+            const existing = Chart.getChart(canvas);
+            if (existing) existing.destroy();
+            new Chart(canvas.getContext('2d'), {
+                type: 'doughnut',
+                data: {
+                    labels: ['Easy', 'Medium', 'Hard'],
+                    datasets: [{
+                        data: [state.easySolved || 0, state.mediumSolved || 0, state.hardSolved || 0],
+                        backgroundColor: ['#10B981', '#F59E0B', '#EF4444'],
+                        borderWidth: 0,
+                    }]
+                },
+                options: {
+                    responsive: true, maintainAspectRatio: false,
+                    plugins: { legend: { position: 'bottom', labels: { font: { size: 11 }, color: '#94A3B8' } } },
+                    cutout: '65%'
+                }
+            });
+        }
+    };
+});
+</script>
+
+</body>
+</html>
